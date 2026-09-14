@@ -12,7 +12,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Security and middleware
-app.use(helmet());
+app.use(helmet({ contentSecurityPolicy: false }));
 app.use(
   cors({
     origin: "*",
@@ -43,10 +43,14 @@ app.get("/", (req, res) => {
 // Global error handler
 app.use(errorHandler);
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`==================================================`);
-  console.log(`🚀 CodePilot AI Backend Server running on port ${PORT}`);
-  console.log(`🔗 Health Check: http://localhost:${PORT}/api/health`);
-  console.log(`==================================================`);
-});
+// Start server locally (if not running in Vercel serverless environment)
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`==================================================`);
+    console.log(`🚀 CodePilot AI Backend Server running on port ${PORT}`);
+    console.log(`🔗 Health Check: http://localhost:${PORT}/api/health`);
+    console.log(`==================================================`);
+  });
+}
+
+export default app;
